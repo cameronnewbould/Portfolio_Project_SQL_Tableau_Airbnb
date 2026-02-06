@@ -28,7 +28,7 @@ This project showcases a range of SQL and analytical skills:
 The primary goals of this project are to:
 
 - **Demonstrate professional SQL EDA workflow for a portfolio project**  
-- **Generate a cleaned fact table for further analysis with Tableau**
+- **Generate a cleaned fact table for further analysis with Tableau** `listings_dashboard.csv`
 
 - Explore the distribution and characteristics of Airbnb listings across NYC  
 - Identify pricing patterns and outliers  
@@ -541,6 +541,57 @@ ORDER BY number_of_listings DESC;
 | Bronx               | 1091               |
 | Staten Island       | 373                |
 
+</details>
+
+<details>
+<summary>7. Final Clean</summary>
+
+**Purpose:** Generate `listings_dashboard` for further analysis.
+
+```sql
+-- Created a copy of the cleaned fact table
+CREATE TABLE listings_dashboard AS
+SELECT *
+FROM listings_clean;
+
+-- Verified this worked
+SELECT *
+FROM listings_dashboard
+LIMIT 10;
+
+-- Added derived columnns from previous queries 
+ALTER TABLE listings_dashboard
+ADD COLUMN total_revenue_estimate NUMERIC;
+
+-- Fill the new column with calculated values
+UPDATE listings_dashboard
+SET total_revenue_estimate = price * availability_365;
+
+-- Verified this worked
+
+-- Ensured NULLs are replaced with 0 where appropriate 
+UPDATE listings_dashboard
+SET reviews_per_month = 0
+WHERE reviews_per_month IS NULL;
+
+-- Verified this worked
+SELECT *
+FROM listings_dashboard
+WHERE reviews_per_month > 1
+LIMIT 10;
+
+-- Finally added a column to show TRUE/FALSE for flagged outliers
+ALTER TABLE listings_dashboard
+ADD COLUMN is_outlier BOOLEAN;
+
+UPDATE listings_dashboard
+SET is_outlier = CASE
+    WHEN numeric_flag = 'INVALID' THEN TRUE
+    ELSE FALSE
+END;
+
+-- Then exported the dataset as .csv
+```
 </details>
 
 ---
