@@ -87,7 +87,7 @@ The EDA includes the following calculations and metrics:
 ```sql
 SELECT COUNT(*) AS total_listings 
 FROM listings_clean;
-
+```
 | total_listings |
 | -------------- |
 | 48895          |
@@ -99,7 +99,7 @@ SELECT neighbourhood_group, COUNT(*) AS total_listings
 FROM listings_clean
 GROUP BY neighbourhood_group
 ORDER BY total_listings DESC;
-
+```
 | neighbourhood_group | total_listings |
 | ------------------- | -------------- |
 | Manhattan           | 21661          |
@@ -116,7 +116,7 @@ SELECT room_type,
 FROM listings_clean
 GROUP BY room_type
 ORDER BY total_listings DESC;
-
+```
 | room_type       | total_listings |
 | --------------- | -------------- |
 | Entire home/apt | 25409          |
@@ -130,10 +130,11 @@ SELECT
     MIN(last_review) AS first_review,
     MAX(last_review) AS most_recent_review
 FROM listings_clean;
-
+```
 | first_review | most_recent_review |
 | ------------ | ------------------ |
 | 2011-03-28   | 2019-07-08         |
+
 </details>
 
 <details>
