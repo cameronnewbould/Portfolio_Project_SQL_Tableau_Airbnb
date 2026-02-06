@@ -456,7 +456,7 @@ borough_averages;
 | ----------- |
 | \-0.7644    |
 
-Therefore, a strong negative correlation between the `avg_price_by_borough` and `avg_reviews_per_month` indicating that more expensive listings have less frequent reviews.
+Therefore, a strong negative correlation between the `avg_price_by_borough` and `avg_reviews_per_month` was observed indicating that more expensive listings have less frequent reviews.
 
 </details>
 
