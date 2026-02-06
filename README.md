@@ -99,7 +99,7 @@ Therefore, columns with missing data include:
 | last_review_count       | 38843 | means 0 reviews to date hence equal to reviews_per_month_count |
 | reviews_per_month_count | 38843 | means 0 reviews hence equal to last_review_count               |
 
-None of the NULL values indicate critically missing data therefore the chosen solution is to replace NULL with 0 for the reviews_per_month column as this is suitable for quick analysis purposes however for the purpose of EDA demonstration, a cleaned table with this change permanently integrated is generated.
+None of the `NULL` values indicate critically missing data therefore the chosen solution is to replace `NULL` with 0 for the `reviews_per_month` column as this is suitable for quick analysis purposes however for the purpose of EDA demonstration, a cleaned table with this change permanently integrated is generated.
 
 ```sql
 CREATE TABLE listings_clean AS
@@ -110,14 +110,14 @@ FROM listings;
 
 ### b. Check for invalid numeric values
 
-Due to the process in which the table was imported into the database, all datatypes were initially set to TEXT, this was then later corrected using ALTER TABLE and ALTER COLUMN e.g.
+Due to the process in which the table was imported into the database, all datatypes were initially set to `TEXT`, this was then later corrected using `ALTER TABLE` and `ALTER COLUMN` e.g.
 
 ```sql
 ALTER TABLE listings
 ALTER COLUMN id TYPE INT USING id::INT;
 ```
 Therefore, invalid characters in the numeric columns were removed in this process.
-Data which was deemed unreasonable such as minimum nights available being 0 or negative was flagged, this was added to `listings_clean` as the numeric_flag column. 
+Data which was deemed unreasonable such as minimum nights available being 0 or negative was flagged, this was added to `listings_clean` as the `numeric_flag` column. 
 
 ```sql
 ALTER TABLE listings_clean
@@ -135,7 +135,7 @@ END;
 
 ### c. Check for duplicates
 
-In regards to the listings id and the host_id a duplicate check was done, no duplicate listing ids were identified however some host_ids were found – these corresponded with different listings so are therefore legitimate e.g. 
+In regards to the listings `id` and the `host_id` a duplicate check was done, no duplicate listing ids were identified however some `host_id`s were found – these corresponded with different listings so are therefore legitimate e.g. 
 
 ```sql 
 SELECT host_id, name, COUNT(*)
@@ -211,10 +211,95 @@ FROM listings_clean;
 <details>
 <summary>2. Pricing Analysis</summary>
 
-**Purpose:** Analyse distribution of prices, averages by room type/borough, and identify outliers.
+**Purpose:** Statistically analyse distribution of prices, averages by room type/borough, and identify outliers.
 
-**SQL queries and results:**  
-*(Leave blank to fill in your SQL and results)*
+---
+
+### a. Minimum, maximum, mean, median prices
+
+```sql
+SELECT 
+    MIN(price) AS greatest_price,
+    MAX(price) AS lowest_price,
+    ROUND(AVG(price),2) AS avg_price
+FROM listings_clean;
+```
+| greatest_price | lowest_price | avg_price |
+| -------------- | ------------ | --------- |
+| 0              | 10000        | 152.72    |
+
+```sql
+SELECT
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price) AS median_price
+FROM listings_clean;
+```
+| median_price |
+| ------------ |
+| 106          |
+### b. Average price by room type
+
+```sql
+SELECT room_type,
+	ROUND(AVG(price), 2) AS avg_price_room_type
+FROM listings_clean
+	GROUP BY room_type
+	ORDER BY avg_price_room_type DESC;
+```
+| room_type       | avg_price_room_type |
+| --------------- | ------------------- |
+| Entire home/apt | 211.79              |
+| Private room    | 89.78               |
+| Shared room     | 70.13               |
+
+### c. Average price by borough
+
+```sql
+SELECT 
+    neighbourhood_group,
+    ROUND(AVG(price), 2) AS avg_price_neighbourhood_group
+FROM listings_clean
+GROUP BY neighbourhood_group
+ORDER BY avg_price_neighbourhood_group DESC;
+```
+| neighbourhood_group | avg_price_neighbourhood_group |
+| ------------------- | ----------------------------- |
+| Manhattan           | 196.88                        |
+| Brooklyn            | 124.38                        |
+| Staten Island       | 114.81                        |
+| Queens              | 99.52                         |
+| Bronx               | 87.50                         |
+
+### d. Identify outlier listings
+Acts as a check to ensure all outliers are flagged as being `INVALID` to ensure that further processing on the flagged data would be effective. The dataset is purposefully kept somewhat dirty to demonstrate the ability to work with dirty data as well as to not be too heavy handed in the approach to dirty data by removing too aggressively. A clean dataset can be produced by removing the flagged data. 
+
+```sql
+SELECT 	id, price, numeric_flag
+FROM listings_clean
+	WHERE price <= 0;
+```
+| id       | price | numeric_flag |
+| -------- | ----- | ------------ |
+| 18750597 | 0     | INVALID      |
+| 20333471 | 0     | INVALID      |
+| 20523843 | 0     | INVALID      |
+| ...      | ...   | ...          |
+
+```sql
+SELECT 	id, price, numeric_flag
+FROM listings_clean
+	WHERE price > 10000;
+```
+= 0
+Therefore, this was verified with a quick check of the max price.
+
+```sql
+SELECT 	
+	MAX(price) AS max_price
+FROM listings_clean;
+```
+| max_price |
+| --------- |
+| 10000     |
 
 </details>
 
@@ -223,8 +308,69 @@ FROM listings_clean;
 
 **Purpose:** Identify top hosts, calculate average listings per host, and estimate potential revenue.
 
-**SQL queries and results:**  
-*(Leave blank to fill in your SQL and results)*
+### a. Hosts with the most listings
+
+```sql
+SELECT host_id, host_name, COUNT(*)
+FROM listings
+	GROUP BY host_id, host_name
+	HAVING COUNT(*) > 1
+	ORDER BY COUNT DESC
+	LIMIT 10;
+```
+| host_id   | host_name         | count |
+| --------- | ----------------- | ----- |
+| 219517861 | Sonder (NYC)      | 327   |
+| 107434423 | Blueground        | 232   |
+| 30283594  | Kara              | 121   |
+| 137358866 | Kazuya            | 103   |
+| 16098958  | Jeremy & Laura    | 96    |
+| 12243051  | Sonder            | 96    |
+| 61391963  | Corporate Housing | 91    |
+| 22541573  | Ken               | 87    |
+| 200380610 | Pranjal           | 65    |
+| 1475015   | Mike              | 52    |
+
+### b. Average number of listings per host
+
+```sql
+SELECT
+    ROUND(AVG(listing_count), 2) AS avg_listings_per_host
+FROM (
+    SELECT
+        host_id,
+        COUNT(*) AS listing_count
+    FROM listings_clean
+    GROUP BY host_id
+) AS host_listing_counts;
+```
+| avg_listings_per_host |
+| --------------------- |
+| 1.31                  |
+
+### c. Top hosts by estimated total revenue (price * availability)  
+
+```sql
+SELECT
+    host_name,
+    SUM(price * availability_365) AS total_estimated_revenue
+FROM listings_clean
+GROUP BY host_name
+ORDER BY total_estimated_revenue DESC
+LIMIT 10;
+```
+| host_name    | total_estimated_revenue |
+| ------------ | ----------------------- |
+| Sonder (NYC) | 24563716                |
+| Blueground   | 18021038                |
+| Jessica      | 11045293                |
+| Kara         | 10656021                |
+| David        | 7834953                 |
+| Red Awning   | 7686699                 |
+| Kevin        | 6921026                 |
+| Henry        | 6800246                 |
+| Alex         | 6793232                 |
+| Michael      | 6690351                 |
 
 </details>
 
@@ -233,18 +379,142 @@ FROM listings_clean;
 
 **Purpose:** Evaluate reviews, average reviews per month, and correlations with price.
 
-**SQL queries and results:**  
-*(Leave blank to fill in your SQL and results)*
+### a. Listings with the most reviews
+
+```sql
+SELECT 
+    name, number_of_reviews 
+FROM listings_clean
+ORDER BY number_of_reviews DESC
+LIMIT 10;
+```
+| name                                              | number_of_reviews |
+| ------------------------------------------------- | ----------------- |
+| Room near JFK Queen Bed                           | 629               |
+| Great Bedroom in Manhattan                        | 607               |
+| Beautiful Bedroom in Manhattan                    | 597               |
+| Private Bedroom in Manhattan                      | 594               |
+| Room Near JFK Twin Beds                           | 576               |
+| Steps away from Laguardia airport                 | 543               |
+| Manhattan Lux Loft.Like.Love.Lots.Look !          | 540               |
+| Cozy Room Family Home LGA Airport NO CLEANING FEE | 510               |
+| Private brownstone studio Brooklyn                | 488               |
+| LG Private Room/Family Friendly                   | 480               |
+
+### b. Average reviews per month by borough
+
+```sql
+SELECT
+    neighbourhood_group,
+    ROUND(AVG(reviews_per_month), 2) AS avg_reviews_per_month
+FROM listings_clean
+GROUP BY neighbourhood_group
+ORDER BY avg_reviews_per_month DESC;
+```
+| neighbourhood_group | avg_reviews_per_month |
+| ------------------- | --------------------- |
+| Queens              | 1.94                  |
+| Staten Island       | 1.87                  |
+| Bronx               | 1.84                  |
+| Brooklyn            | 1.28                  |
+| Manhattan           | 1.27                  |
+
+### c. Correlation between number of reviews and price
+
+In order to identify the correlation, I had to wrap the below query within another in order to find the correlation between the two newly generated columns
+
+```sql 
+SELECT
+    neighbourhood_group,
+    ROUND(AVG(reviews_per_month), 2) AS avg_reviews_per_month,
+    ROUND(AVG(price), 2) AS avg_price_by_borough
+FROM listings_clean
+GROUP BY neighbourhood_group
+ORDER BY avg_reviews_per_month DESC;
+```
+| neighbourhood_group | avg_reviews_per_month | avg_price_by_borough |
+| ------------------- | --------------------- | -------------------- |
+| Queens              | 1.94                  | 99.52                |
+| Staten Island       | 1.87                  | 114.81               |
+| Bronx               | 1.84                  | 87.50                |
+| Brooklyn            | 1.28                  | 124.38               |
+| Manhattan           | 1.27                  | 196.88               |
+
+```sql
+SELECT
+	CORR(avg_reviews_per_month, avg_price_by_borough) AS correlation
+FROM (
+	SELECT
+		neighbourhood_group,
+		ROUND(AVG(reviews_per_month), 2) AS avg_reviews_per_month,
+		ROUND(AVG(price), 2) AS avg_price_by_borough
+FROM listings_clean
+GROUP BY neighbourhood_group)
+borough_averages;
+```
+| correlation |
+| ----------- |
+| \-0.7644    |
+
+Therefore, a strong negative correlation between the `avg_price_by_borough` and `avg_reviews_per_month` indicating that more expensive listings have less frequent reviews.
 
 </details>
 
 <details>
 <summary>5. Availability & Booking Patterns</summary>
 
-**Purpose:** Analyse minimum nights, availability (full-year vs seasonal), and price vs availability.
+**Purpose:** Analyse minimum nights, availability (full-year vs limited), and price vs availability.
 
-**SQL queries and results:**  
-*(Leave blank to fill in your SQL and results)*
+### a. Average minimum nights by room type
+
+```sql
+SELECT
+    room_type,
+    ROUND(AVG(minimum_nights), 2) AS avg_min_nights
+FROM listings_clean
+GROUP BY room_type
+ORDER BY avg_min_nights;
+```
+| room_type       | avg_min_nights |
+| --------------- | -------------- |
+| Private room    | 5.38           |
+| Shared room     | 6.48           |
+| Entire home/apt | 8.51           |
+
+### b. Listings available 365 days vs limited  
+
+```sql
+SELECT
+    CASE
+        WHEN availability_365 = 365 THEN 'Available all year'
+        ELSE 'Limited availability'
+    END AS availability_type,
+    COUNT(*) AS total_listings
+FROM listings_clean
+GROUP BY availability_type;
+```
+| availability_type    | total_listings |
+| -------------------- | -------------- |
+| Available all year   | 1295           |
+| Limited availability | 47600          |
+
+### c. Average price vs availability
+
+```sql
+SELECT
+    CASE
+        WHEN availability_365 = 365 THEN 'Available all year'
+        ELSE 'Limited availability'
+    END AS availability_type,
+    COUNT(*) AS total_listings,
+    ROUND(AVG(price), 2) AS avg_price_by_availability
+FROM listings_clean
+GROUP BY availability_type;
+```
+| availability_type    | total_listings | avg_price_by_availability |
+| -------------------- | -------------- | ------------------------- |
+| Available all year   | 1295           | 250.77                    |
+| Limited availability | 47600          | 150.05                    |
 
 </details>
 
@@ -253,8 +523,23 @@ FROM listings_clean;
 
 **Purpose:** Examine listings per neighbourhood and identify geographic clusters.
 
-**SQL queries and results:**  
-*(Leave blank to fill in your SQL and results)*
+### a. Number of listings per neighbourhood
+
+```sql
+SELECT
+    neighbourhood_group,
+    COUNT(id) AS number_of_listings
+FROM listings_clean
+GROUP BY neighbourhood_group
+ORDER BY number_of_listings DESC;
+```
+| neighbourhood_group | number_of_listings |
+| ------------------- | ------------------ |
+| Manhattan           | 21661              |
+| Brooklyn            | 20104              |
+| Queens              | 5666               |
+| Bronx               | 1091               |
+| Staten Island       | 373                |
 
 </details>
 
