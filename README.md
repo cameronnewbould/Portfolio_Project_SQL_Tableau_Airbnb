@@ -1,5 +1,5 @@
 # Portfolio-Project-SQL-Airbnb
-# 🏠 Airbnb NYC 2019 Exploratory Data Analysis (EDA)
+# 🏠 Airbnb NYC 2019 Exploratory Data Analysis
 
 ---
 
@@ -27,53 +27,124 @@ This project showcases a range of SQL and analytical skills:
 ## 🎯 Project Objectives
 The primary goals of this project are to:
 
-- Demonstrate professional SQL EDA workflow for a portfolio project  
+- **Demonstrate professional SQL EDA workflow for a portfolio project**  
+- **Generate cleaned fact and dimension tables for further analysis with Tableau**
+
 - Explore the distribution and characteristics of Airbnb listings across NYC  
 - Identify pricing patterns and outliers  
 - Evaluate host activity and total revenue potential  
 - Analyse reviews, popularity, and booking patterns  
 - Investigate availability trends and seasonal effects  
 - Examine geographic distribution and potential clusters of listings  
-- **Generate a cleaned table `listings_clean` for further analysis with Tableau**
----
-
-## 📂 Dataset
-The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
-
-### Dataset Characteristics
-- 48,895 listings across NYC  
-- 16 key columns including `price`, `reviews_per_month`, `availability_365`, `latitude`, `longitude`  
-- Some columns contain missing or inconsistent values  
-
----
-
-## 🛠 Data Preparation & Modelling
-- Created PostgreSQL database and `listings` table  
-- Imported CSV data using `\copy` in SQL Shell (psql)  
-- Re-encoded CSV to UTF-8 to resolve import errors  
-- Altered column types to numeric/date types where required  
-- Created a cleaned table `listings_clean` for analysis  
-- Flagged invalid numeric values and handled missing values  
-- Ensured data consistency and integrity for analysis  
-
----
-
-## 📐 Key Measures & Calculations
-The EDA includes the following calculations and metrics:
-
-- Total listings and listings per borough/room type  
-- Minimum, maximum, average, and median prices
-- Average price by room type and borough  
-- Identification of pricing outliers  
-- Hosts with the most listings and estimated total revenue  
-- Average reviews per month and top-reviewed listings  
-- Correlation between price and reviews  
-- Average minimum nights by room type and availability patterns  
-- Geographic clusters based on latitude and longitude  
 
 ---
 
 # 📊 EDA Sections
+The following sections include the SQL code block queries and the results.
+<details>
+<summary>0. Data Quality Checks</summary>
+
+**Purpose:** Assess the quality of the data including NULL values, duplicates and invalid values
+
+### a. Missing or NULL values per column
+
+```sql
+SELECT
+    COUNT(*) AS total_rows,
+    COUNT(id) AS id_count,
+    COUNT(name) AS name_count,
+    COUNT(host_id) AS host_id_count,
+    COUNT(host_name) AS host_name_count,
+    COUNT(neighbourhood_group) AS neighbourhood_group_count,
+    COUNT(neighbourhood) AS neighbourhood_count,
+    COUNT(latitude) AS latitude_count,
+    COUNT(longitude) AS longitude_count,
+    COUNT(room_type) AS room_type_count,
+    COUNT(price) AS price_count,
+    COUNT(minimum_nights) AS minimum_nights_count,
+    COUNT(number_of_reviews) AS number_of_reviews_count,
+    COUNT(last_review) AS last_review_count,
+    COUNT(reviews_per_month) AS reviews_per_month_count,
+    COUNT(calculated_host_listings_count) AS calculated_host_listings_count_count,
+    COUNT(availability_365) AS availability_365_count
+FROM listings;
+```
+| Column                               | Count |
+| ------------------------------------ | ----- |
+| total_rows                           | 48895 |
+| id_count                             | 48895 |
+| name_count                           | 48879 |
+| host_id_count                        | 48895 |
+| host_name_count                      | 48874 |
+| neighbourhood_group_count            | 48895 |
+| neighbourhood_count                  | 48895 |
+| latitude_count                       | 48895 |
+| longitude_count                      | 48895 |
+| room_type_count                      | 48895 |
+| price_count                          | 48895 |
+| minimum_nights_count                 | 48895 |
+| number_of_reviews_count              | 48895 |
+| last_review_count                    | 38843 |
+| reviews_per_month_count              | 38843 |
+| calculated_host_listings_count_count | 48895 |
+| availability_365_count               | 48895 |
+---
+
+Therefore, columns with missing data include:
+
+| column                  | count | reasoning                                                      |
+| ----------------------- | ----- | -------------------------------------------------------------- |
+| name_count              | 48879 | irrelevant to solve as this doesnt impact numerical stats      |
+| host_name_count         | 48874 | irrelevant to solve as this doesnt impact numerical stats      |
+| last_review_count       | 38843 | means 0 reviews to date hence equal to reviews_per_month_count |
+| reviews_per_month_count | 38843 | means 0 reviews hence equal to last_review_count               |
+
+None of the NULL values indicate critically missing data therefore the chosen solution is to replace NULL with 0 for the reviews_per_month column as this is suitable for quick analysis purposes however for the purpose of EDA demonstration, a cleaned table with this change permanently integrated is generated.
+
+```sql
+CREATE TABLE listings_clean AS
+SELECT *,
+       COALESCE(reviews_per_month::NUMERIC, 0) AS reviews_per_month_clean
+FROM listings;
+```
+
+### b. Check for invalid numeric values
+
+Due to the process in which the table was imported into the database, all datatypes were initially set to TEXT, this was then later corrected using ALTER TABLE and ALTER COLUMN e.g.
+
+```sql
+ALTER TABLE listings
+ALTER COLUMN id TYPE INT USING id::INT;
+```
+Therefore, invalid characters in the numeric columns were removed in this process.
+Data which was deemed unreasonable such as minimum nights available being 0 or negative was flagged, this was added to `listings_clean` as the numeric_flag column. 
+
+```sql
+ALTER TABLE listings_clean
+ADD COLUMN numeric_flag TEXT DEFAULT 'OK';
+
+UPDATE listings_clean
+SET numeric_flag = CASE
+           WHEN price <= 0 THEN 'INVALID'
+           WHEN price > 10000 THEN 'INVALID'
+           WHEN minimum_nights <= 0 THEN 'INVALID'
+           WHEN minimum_nights > 365 THEN 'INVALID'
+    ELSE 'OK'
+END;
+```
+
+### c. Check for duplicates
+
+In regards to the listings id and the host_id a duplicate check was done, no duplicate listing ids were identified however some host_ids were found – these corresponded with different listings so are therefore legitimate e.g. 
+
+```sql 
+SELECT host_id, name, COUNT(*)
+FROM listings
+	GROUP BY host_id, name
+	HAVING COUNT(*) > 1;
+```
+   
+</details>
 
 <details>
 <summary>1. General Overview</summary>
@@ -189,6 +260,41 @@ FROM listings_clean;
 
 ---
 
+## 📂 Dataset
+The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
+
+### Dataset Characteristics
+- 48,895 listings across NYC  
+- 16 key columns including `price`, `reviews_per_month`, `availability_365`, `latitude`, `longitude`  
+- Some columns contain missing or inconsistent values  
+
+---
+
+## 🛠 Data Preparation & Modelling
+- Created PostgreSQL database and `listings` table - [Database](screenshots/3_table_created.jpg)
+- Re-encoded CSV to UTF-8 to resolve import errors  - `original_dataset_utf8.csv`
+- Imported CSV data using `\copy` in SQL Shell (psql) - [Import](screenshots/4_data_imported.jpg)
+- Altered column types to numeric/date types where required - [Datatypes](screenshots/5_datatypes_corrected.jpg)
+- Created a cleaned table for analysis - `listings_clean` 
+- Flagged invalid numeric values and handled missing values  
+- Ensured data consistency and integrity for analysis  
+
+---
+
+## 📐 Key Measures & Calculations
+The EDA includes the following calculations and metrics:
+
+- Total listings and listings per borough/room type  
+- Minimum, maximum, average, and median prices
+- Average price by room type and borough  
+- Identification of pricing outliers  
+- Hosts with the most listings and estimated total revenue  
+- Average reviews per month and top-reviewed listings  
+- Correlation between price and reviews  
+- Average minimum nights by room type and availability patterns  
+
+---
+
 ## 📈 Expected Outcome
 The final deliverable is a **professional SQL EDA workflow** demonstrating:
 
@@ -210,9 +316,9 @@ The final deliverable is a **professional SQL EDA workflow** demonstrating:
 
 | File / Folder | Description |
 |---------------|-------------|
-| `SQL Scripts/` | Scripts for table creation, cleaning, and EDA |
+| `screenshots/` | Project screenshots |
 | `README.md` | Project documentation |
-| `Dataset/` | Original or processed CSV files |
+| `dataset/` | Original or processed CSV files |
 
 ---
 
