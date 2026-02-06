@@ -28,7 +28,7 @@ This project showcases a range of SQL and analytical skills:
 The primary goals of this project are to:
 
 - **Demonstrate professional SQL EDA workflow for a portfolio project**  
-- **Generate cleaned fact and dimension tables for further analysis with Tableau**
+- **Generate a cleaned fact table for further analysis with Tableau**
 
 - Explore the distribution and characteristics of Airbnb listings across NYC  
 - Identify pricing patterns and outliers  
