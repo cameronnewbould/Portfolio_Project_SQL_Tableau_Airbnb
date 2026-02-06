@@ -42,7 +42,7 @@ The primary goals of this project are to:
 # 📊 EDA Sections
 The following sections include the SQL code block queries and the results.
 <details>
-<summary>0. Data Quality Checks</summary>
+<summary>##0. Data Quality Checks</summary>
 
 **Purpose:** Assess the quality of the data including NULL values, duplicates and invalid values
 
@@ -147,7 +147,7 @@ FROM listings
 </details>
 
 <details>
-<summary>1. General Overview</summary>
+<summary>##1. General Overview</summary>
 
 **Purpose:** Provide high-level statistics and counts for listings, boroughs, room types, and review dates.
 
@@ -209,7 +209,7 @@ FROM listings_clean;
 </details>
 
 <details>
-<summary>2. Pricing Analysis</summary>
+<summary>##2. Pricing Analysis</summary>
 
 **Purpose:** Statistically analyse distribution of prices, averages by room type/borough, and identify outliers.
 
@@ -304,7 +304,7 @@ FROM listings_clean;
 </details>
 
 <details>
-<summary>3. Host Analysis</summary>
+<summary>##3. Host Analysis</summary>
 
 **Purpose:** Identify top hosts, calculate average listings per host, and estimate potential revenue.
 
@@ -375,7 +375,7 @@ LIMIT 10;
 </details>
 
 <details>
-<summary>4. Reviews & Popularity</summary>
+<summary>##4. Reviews & Popularity</summary>
 
 **Purpose:** Evaluate reviews, average reviews per month, and correlations with price.
 
@@ -461,7 +461,7 @@ Therefore, a strong negative correlation between the `avg_price_by_borough` and 
 </details>
 
 <details>
-<summary>5. Availability & Booking Patterns</summary>
+<summary>##5. Availability & Booking Patterns</summary>
 
 **Purpose:** Analyse minimum nights, availability (full-year vs limited), and price vs availability.
 
@@ -519,7 +519,7 @@ GROUP BY availability_type;
 </details>
 
 <details>
-<summary>6. Geographic Analysis</summary>
+<summary>##6. Geographic Analysis</summary>
 
 **Purpose:** Examine listings per neighbourhood and identify geographic clusters.
 
