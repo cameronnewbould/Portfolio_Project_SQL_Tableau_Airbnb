@@ -1,12 +1,16 @@
-# Portfolio-Project-SQL-Airbnb
-# 🏠 Airbnb NYC 2019 Exploratory Data Analysis
+# Portfolio-Project-SQL-Tableau-Airbnb
+# 🏠 Airbnb NYC 2019 Exploratory Data Analysis and Dashboard
 
 ---
 
 ## 📌 Project Overview
 This project presents an **SQL-based EDA** of the Airbnb NYC 2019 dataset. The analysis explores **listings, pricing, hosts, reviews, availability, and geographic patterns** across New York City neighbourhoods.
+This was followed by the development of an interactive **Tableau dashboard solution** developed using a cleaned Airbnb NYC 2019 dataset prepared in PostgreSQL. 
+The dashboard was designed to explore Airbnb market structure, pricing behaviour, host performance, geographic distribution, and customer engagement across New York City boroughs.
 
-The project demonstrates the process of **data cleaning, transformation, validation, and analysis** using PostgreSQL, producing actionable insights for Airbnb hosts, property managers, and analysts.
+---
+
+![Dashboard](screenshots/6_overview.jpg)
 
 ---
 
@@ -24,18 +28,38 @@ This project showcases a range of SQL and analytical skills:
 
 ---
 
+# 🛠 Tableau Skills & Techniques Demonstrated
+
+This project showcases practical Tableau and data visualisation skills relevant to data analyst roles:
+
+✔ Interactive dashboard design  
+✔ Geographic mapping and spatial analysis  
+✔ Cross-filter dashboard interactivity  
+✔ Dynamic tooltips with embedded visualisations  
+✔ KPI card design and formatting  
+✔ Heatmaps and comparative matrix analysis  
+✔ Donut chart visualisation  
+✔ Parameter and filter integration  
+✔ Distribution and comparative pricing analysis  
+✔ Dashboard layout and UX design principles  
+
+---
+
 ## 🎯 Project Objectives
 The primary goals of this project are to:
 
 - **Demonstrate professional SQL EDA workflow for a portfolio project**  
 - **Generate a cleaned fact table for further analysis with Tableau** `listings_dashboard.csv`
+- **Design an interactive dashboard with Tableau** `airbnb_dashboard.twb`
 
 - Explore the distribution and characteristics of Airbnb listings across NYC  
 - Identify pricing patterns and outliers  
 - Evaluate host activity and total revenue potential  
 - Analyse reviews, popularity, and booking patterns  
 - Investigate availability trends and seasonal effects  
-- Examine geographic distribution and potential clusters of listings  
+- Examine geographic distribution and potential clusters of listings
+- Build an interactive dashboard suitable for executive-level exploration
+- Demonstrate professional Tableau dashboard development skills 
 
 ---
 
@@ -596,22 +620,12 @@ END;
 
 ---
 
-## 📂 Dataset
-The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
-
-### Dataset Characteristics
-- 48,895 listings across NYC  
-- 16 key columns including `price`, `reviews_per_month`, `availability_365`, `latitude`, `longitude`  
-- Some columns contain missing or inconsistent values  
-
----
-
 ## 🛠 Data Preparation & Modelling
 - Created PostgreSQL database and `listings` table - [Database](screenshots/3_table_created.jpg)
 - Re-encoded CSV to UTF-8 to resolve import errors  - `original_dataset_utf8.csv`
 - Imported CSV data using `\copy` in SQL Shell (psql) - [Import](screenshots/4_data_imported.jpg)
 - Altered column types to numeric/date types where required - [Datatypes](screenshots/5_datatypes_corrected.jpg)
-- Created a cleaned table for analysis - `listings_clean` 
+- Created a cleaned table for **Tableau** analysis - `listings_clean` 
 - Flagged invalid numeric values and handled missing values  
 - Ensured data consistency and integrity for analysis  
 
@@ -627,24 +641,88 @@ The EDA includes the following calculations and metrics:
 - Hosts with the most listings and estimated total revenue  
 - Average reviews per month and top-reviewed listings  
 - Correlation between price and reviews  
-- Average minimum nights by room type and availability patterns  
+- Average minimum nights by room type and availability patterns
+
+---
+# 📐 Dashboard Features & Visualisations
+
+## 🗺 Geographic Analysis
+Interactive map displaying Airbnb listings by borough with room type segmentation, dynamic filtering, and comparative pricing tooltips.
+![Dashboard](screenshots/7_map_filters.jpg)
+
+---
+
+## 🔥 Pricing Analysis
+Heatmap visualising average listing prices across boroughs and room types to identify pricing patterns and premium market segments.
+
+![Dashboard](screenshots/8_heatmap.jpg)
+
+---
+
+## 🍩 Market Structure
+Donut chart showing the distribution of Airbnb room types across the NYC market.
+
+---
+
+## 📊 KPI Summary Cards
+
+Key dashboard metrics include:
+
+- Total Listings
+- Average Listing Price
+- Median Listing Price
+- Average Reviews
+- Average Availability
+
+---
+
+## 📈 Host & Review Analysis
+
+Visualisations analysing:
+- Top hosts by review count
+- Total reviews by borough
+- Average listing price by borough
+
+![Dashboard](screenshots/9_host.jpg)
+
+---
+
+## 🔄 Dashboard Interactivity
+
+Dashboard features include:
+- Cross-filtering between visuals
+- Geographic interaction
+- Dynamic room type filtering
+- Price sliders and bucket filters
+- Interactive tooltip analytics
 
 ---
 
 ## 📈 Expected Outcome
-The final deliverable is a **professional SQL EDA workflow** demonstrating:
 
-- Data cleaning and transformation  
-- Advanced aggregations and calculations in PostgreSQL  
-- Analytical insights into listings, pricing, hosts, and reviews  
-- Clear and reusable SQL scripts for future Airbnb analysis  
+The project demonstrates:
+- End-to-end SQL → Tableau workflow
+- Data cleaning and transformation
+- Interactive dashboard design
 
 ---
 
-## ✨ Credits & Acknowledgements
+## 📂 Dataset
+The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
+
+### Dataset Characteristics
+- 48,895 listings across NYC  
+- 16 key columns including `price`, `reviews_per_month`, `availability_365`, `latitude`, `longitude`  
+- Some columns contain missing or inconsistent values  
+- Derived analytical fields created during SQL processing including outlier flagging and price bins
+
+---
+
+# 🛠 Tools & Technologies
 - PostgreSQL / pgAdmin 4  
 - SQL Shell (psql)  
-- Inside Airbnb (data source)  
+- Inside Airbnb (data source)
+- Tableau 
 
 ---
 
@@ -655,6 +733,7 @@ The final deliverable is a **professional SQL EDA workflow** demonstrating:
 | `screenshots/` | Project screenshots |
 | `README.md` | Project documentation |
 | `dataset/` | Original or processed CSV files |
+| `dashboard/` | Tableau workbook file |
 
 ---
 
