@@ -648,12 +648,15 @@ The EDA includes the following calculations and metrics:
 
 ## 🗺 Geographic Analysis
 Interactive map displaying Airbnb listings by borough with room type segmentation, dynamic filtering, and comparative pricing tooltips.
+
+
 ![Dashboard](screenshots/7_map_filters.jpg)
 
 ---
 
 ## 🔥 Pricing Analysis
 Heatmap visualising average listing prices across boroughs and room types to identify pricing patterns and premium market segments.
+
 
 ![Dashboard](screenshots/8_heatmap.jpg)
 
@@ -682,6 +685,7 @@ Visualisations analysing:
 - Top hosts by review count
 - Total reviews by borough
 - Average listing price by borough
+
 
 ![Dashboard](screenshots/9_host.jpg)
 
