@@ -1,11 +1,11 @@
-# Portfolio-Project-SQL-Tableau-Airbnb
 # 🏠 Airbnb NYC 2019 Exploratory Data Analysis and Dashboard
+### Portfolio Project - SQL Tableau - Airbnb
 
 ---
 
 ## 📌 Project Overview
 This project presents an **SQL-based EDA** of the Airbnb NYC 2019 dataset. The analysis explores **listings, pricing, hosts, reviews, availability, and geographic patterns** across New York City neighbourhoods.
-This was followed by the development of an interactive **Tableau dashboard solution** developed using a cleaned Airbnb NYC 2019 dataset prepared in PostgreSQL. 
+This was followed by the development of an interactive **Tableau dashboard** developed using a cleaned Airbnb NYC 2019 dataset prepared in **PostgreSQL**. 
 The dashboard was designed to explore Airbnb market structure, pricing behaviour, host performance, geographic distribution, and customer engagement across New York City boroughs.
 
 ---
