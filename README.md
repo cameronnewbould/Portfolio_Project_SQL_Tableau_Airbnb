@@ -6,7 +6,7 @@
 ## 📌 Project Overview
 This project presents an **SQL-based EDA** of the Airbnb NYC 2019 dataset. The analysis explores **listings, pricing, hosts, reviews, availability, and geographic patterns** across New York City neighbourhoods.
 This was followed by the development of an interactive **Tableau dashboard** developed using a cleaned Airbnb NYC 2019 dataset prepared in **PostgreSQL**. 
-The dashboard was designed to explore Airbnb market structure, pricing behaviour, host performance, geographic distribution, and customer engagement across New York City boroughs.
+The dashboard was designed to explore **Airbnb market structure, pricing behaviour, host performance, geographic distribution, and customer engagement** across New York City boroughs.
 
 ---
 
@@ -44,10 +44,10 @@ The dashboard was designed to explore Airbnb market structure, pricing behaviour
 ## 🎯 Project Objectives
 The primary goals of this project are to:
 
-- **Demonstrate professional SQL to Tableau EDA and presentation workflow for a portfolio project**  
+- **Demonstrate professional SQL EDA and workflow for a portfolio project**  
 - **Generate a cleaned fact table for further analysis with Tableau** `listings_dashboard.csv`
 - **Design an interactive dashboard with Tableau** `airbnb_dashboard.twb`
-- Demonstrate professional Tableau dashboard development skills 
+- **Demonstrate professional Tableau dashboard workflow and development skills** 
 
 ---
 
