@@ -16,8 +16,6 @@ The dashboard was designed to explore Airbnb market structure, pricing behaviour
 
 ## 🛠 Key SQL & Data Analysis Techniques Demonstrated
 
-This project showcases a range of SQL and analytical skills:
-
 ✔ Database setup and table creation in **PostgreSQL**  
 ✔ Data cleaning and type casting using `ALTER TABLE` and `CAST`  
 ✔ Handling missing values and invalid numeric entries  
@@ -29,8 +27,6 @@ This project showcases a range of SQL and analytical skills:
 ---
 
 # 🛠 Tableau Skills & Techniques Demonstrated
-
-This project showcases practical Tableau and data visualisation skills relevant to data analyst roles:
 
 ✔ Interactive dashboard design  
 ✔ Geographic mapping and spatial analysis  
@@ -48,23 +44,15 @@ This project showcases practical Tableau and data visualisation skills relevant 
 ## 🎯 Project Objectives
 The primary goals of this project are to:
 
-- **Demonstrate professional SQL EDA workflow for a portfolio project**  
+- **Demonstrate professional SQL to Tableau EDA and presentation workflow for a portfolio project**  
 - **Generate a cleaned fact table for further analysis with Tableau** `listings_dashboard.csv`
 - **Design an interactive dashboard with Tableau** `airbnb_dashboard.twb`
-
-- Explore the distribution and characteristics of Airbnb listings across NYC  
-- Identify pricing patterns and outliers  
-- Evaluate host activity and total revenue potential  
-- Analyse reviews, popularity, and booking patterns  
-- Investigate availability trends and seasonal effects  
-- Examine geographic distribution and potential clusters of listings
-- Build an interactive dashboard suitable for executive-level exploration
 - Demonstrate professional Tableau dashboard development skills 
 
 ---
 
 # 📊 EDA Sections
-The following sections include the SQL code block queries and the results.
+The following sections include the SQL queries and the subsequent outputs.
 <details>
 <summary>0. Data Quality Checks</summary>
 
@@ -294,7 +282,9 @@ ORDER BY avg_price_neighbourhood_group DESC;
 | Bronx               | 87.50                         |
 
 ### d. Identify outlier listings
-Acts as a check to ensure all outliers are flagged as being `INVALID` to ensure that further processing on the flagged data would be effective. The dataset is purposefully kept somewhat dirty to demonstrate the ability to work with dirty data as well as to not be too heavy handed in the approach to dirty data by removing too aggressively. A clean dataset can be produced by removing the flagged data. 
+This acts as a check to ensure all outliers are flagged as being `INVALID` to ensure that further processing on the flagged data would be effective. 
+The dataset is purposefully kept somewhat dirty to demonstrate the ability to work with dirty data in Tableau as well as to not be too heavy handed in the approach to dirty data by removing too aggressively. 
+A thoroughly clean dataset would require removing the flagged data. 
 
 ```sql
 SELECT 	id, price, numeric_flag
@@ -445,7 +435,7 @@ ORDER BY avg_reviews_per_month DESC;
 
 ### c. Correlation between number of reviews and price
 
-In order to identify the correlation, I had to wrap the below query within another in order to find the correlation between the two newly generated columns
+In order to identify the correlation, the below query was wrapped within another in order to find the correlation between the two newly generated columns
 
 ```sql 
 SELECT
@@ -720,12 +710,6 @@ The project demonstrates:
 
 ## 📂 Dataset
 The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
-
-### Dataset Characteristics
-- 48,895 listings across NYC  
-- 16 key columns including `price`, `reviews_per_month`, `availability_365`, `latitude`, `longitude`  
-- Some columns contain missing or inconsistent values  
-- Derived analytical fields created during SQL processing including outlier flagging and price bins
 
 ---
 
