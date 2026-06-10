@@ -26,7 +26,7 @@
 
 ---
 
-# 🛠 Tableau Skills & Techniques Demonstrated
+## 🛠 Tableau & UX Techniques Demonstrated
 
 ✔ Interactive dashboard design  
 ✔ Geographic mapping and spatial analysis  
