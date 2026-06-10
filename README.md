@@ -708,12 +708,12 @@ The project demonstrates:
 
 ---
 
-## 📂 Dataset
+# 📂 Dataset
 The dataset is sourced from **Inside Airbnb**: a public repository of Airbnb listings, including detailed information about listings, hosts, prices, reviews, and location.  🔗 [Dataset](http://insideairbnb.com/get-the-data.html)
 
 ---
 
-# 🛠 Tools & Technologies
+## 🛠 Tools & Technologies
 - PostgreSQL / pgAdmin 4  
 - SQL Shell (psql)  
 - Inside Airbnb (data source)
